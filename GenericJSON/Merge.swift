@@ -32,42 +32,15 @@ extension JSON {
     ///
     /// Only self's keys are considered.
     /// Both self and other must have the same top level json structure.
-    fileprivate mutating func merge(with other: JSON, typecheck: Bool) throws {
-
-        switch self {
-        case let .object(object):
-            for (key, _) in object {
-                if let otherValue = other[key] {
-                    try self[key]!.merge(with: otherValue, typecheck: false)
-                } else {
-                    //self
-                }
-            }
-        case let .array(arrayValue):
-            if let otherArray = other.arrayValue {
-                self = JSON.array(arrayValue + otherArray)
-            }
-        default:
-            self = other
-        }
-
-    }
-    
-    /// Worker function which performs a mutating merge.
-    ///
-    /// The keys of other are used to merge into self.
-    /// Both self and other must have the same top level json structure.
 //    fileprivate mutating func merge(with other: JSON, typecheck: Bool) throws {
 //
 //        switch self {
-//        case .object:
-//            if let otherObject = other.objectValue {
-//                for (key, _) in otherObject {
-//                    if self[key] != nil {
-//                        try self[key]!.merge(with: otherObject[key]!, typecheck: false)
-//                    } else {
-//                        self[key] = otherObject[key] // add it
-//                    }
+//        case let .object(object):
+//            for (key, _) in object {
+//                if let otherValue = other[key] {
+//                    try self[key]!.merge(with: otherValue, typecheck: false)
+//                } else {
+//                    //self
 //                }
 //            }
 //        case let .array(arrayValue):
@@ -79,6 +52,33 @@ extension JSON {
 //        }
 //
 //    }
+    
+    /// Worker function which performs a mutating merge.
+    ///
+    /// The keys of other are used to merge into self.
+    /// Both self and other must have the same top level json structure.
+    fileprivate mutating func merge(with other: JSON, typecheck: Bool) throws {
+
+        switch self {
+        case .object:
+            if let otherObject = other.objectValue {
+                for (key, _) in otherObject {
+                    if self[key] != nil {
+                        try self[key]!.merge(with: otherObject[key]!, typecheck: false)
+                    } else {
+                        self[key] = otherObject[key] // add it
+                    }
+                }
+            }
+        case let .array(arrayValue):
+            if let otherArray = other.arrayValue {
+                self = JSON.array(arrayValue + otherArray)
+            }
+        default:
+            self = other
+        }
+
+    }
     
 }
 
